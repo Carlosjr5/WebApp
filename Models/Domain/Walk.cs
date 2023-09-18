@@ -9,7 +9,7 @@
 
         public string Description { get; set; } 
 
-        public string LenghtInKm { get; set; }  
+        public double LenghtInKm { get; set; }  
         
         public string? WalkImageUrl { get; set; }
 
