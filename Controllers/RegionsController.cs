@@ -1,151 +1,145 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using NZWalks.API.CustomActionFilters;
-using NZWalks.API.Data;
-using NZWalks.API.Models.Domain;
-using NZWalks.API.Models.DTO;
-using NZWalks.API.Repositories;
-using static System.Net.WebRequestMethods;
+﻿using Microsoft.AspNetCore.Mvc;
+using NZWalks.UI.Models;
+using NZWalks.UI.Models.DTO;
+using System.Reflection;
+using System.Text;
+using System.Text.Json;
 
-namespace NZWalks.API.Controllers
+namespace NZWalks.UI.Controllers
 {
-
-    // https://localhost:1234/api/regions
-    [Route("api/[controller]")]
-    [ApiController]
-  
-    public class RegionsController : ControllerBase
+    public class RegionsController : Controller
     {
+        private readonly IHttpClientFactory httpClientFactory;
 
-        private readonly NZWalksDbContext dbContext;
-        private readonly IRegionRepository regionRepository;
-        private readonly IMapper mapper;
-
-        //Controller Constructor
-        public RegionsController(NZWalksDbContext dbContext,
-            IRegionRepository regionRepository, IMapper mapper )
+        public RegionsController(IHttpClientFactory httpClientFactory)
         {
-            //declaring database context.
-            this.dbContext = dbContext;
-            //Declaring region repository.
-            this.regionRepository = regionRepository;
-            //Mapping data.
-            this.mapper = mapper;
+            this.httpClientFactory = httpClientFactory;
         }
 
-        // GET ALL REGIONS Hard asyncrunized
-        // GET: https://localhost:PORT/api/regions
         [HttpGet]
-        [Authorize(Roles = "Reader")]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> Index()
         {
-
-            // Get data from database - Domain models
-            var regionsDomain = await regionRepository.GetAllAsync();
-
-            //Return mapped DTOs
-            return Ok(mapper.Map<List<RegionDto>>(regionsDomain));
-        }
-
-        //GET SINGLE REGION (Get Region By ID)
-        //GET https://localhost/api/regions/{id}
-        [HttpGet]
-        [Route("{id:Guid}")]
-        [Authorize(Roles = "Reader")]
-        public async Task<IActionResult> GetById([FromRoute] Guid id)
+            List<RegionDto> response = new List<RegionDto>();
+            try
             {
+                //Get All Regions from the Web API
+                var client = httpClientFactory.CreateClient();
 
-            // var region = dbContext.Regions.Find(id);
+                var httpResponseMessage = await client.GetAsync("https://localhost:7002/api/regions");
 
-            //Get region domain model from database
-            var regionDomain = await regionRepository.GetByIdAsync(id);
+                //Checking is successfull the response message 200.
+                httpResponseMessage.EnsureSuccessStatusCode();
 
-            if(regionDomain == null)
-            {
-                return NotFound();
-            }
-
-            //return DTO back to client
-            return Ok(mapper.Map<RegionDto>(regionDomain));
-            }
-
-
-        // POST To Create new Region
-        // POST: https://localhost:PORT/api/regions
-        [HttpPost]
-        [ValidateModel]
-        [Authorize(Roles = "Writer")]
-        public async Task<IActionResult> Create([FromBody] AddRegionRequestDto addRegionRequestDto)
-        {
-
-                // Map or Convert DTO to Domain Model
-                var regionDomainModel = mapper.Map<Region>(addRegionRequestDto);
-
-                //Use Dopmain Model to create REgion
-                regionDomainModel = await regionRepository.CreateAsync(regionDomainModel);
-
-                //Saving changes to see it reflect it.
-                await dbContext.SaveChangesAsync();
-
-                //Map Domain model back to DTO
-                var regionDto = mapper.Map<RegionDto>(regionDomainModel);
-
-                return CreatedAtAction(nameof(GetById), new { id = regionDto.Id }, regionDto);
-        }
-
-
-        //Update Data
-        //PUT: https://localhost:PORT/api/regions/{id}
-        [HttpPut]
-        [Route("{id:Guid}")]
-        [ValidateModel]
-        [Authorize(Roles = "Writer")]
-        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateRegionRequestDto updateRegionRequestDto)
-        {
-
-                //Map DTO to Domain Model
-                var regionDomainModel = mapper.Map<Region>(updateRegionRequestDto);
-
-
-                //Check if region exists
-                regionDomainModel = await regionRepository.UpdateAsync(id, regionDomainModel);
-
-                if (regionDomainModel == null)
-                {
-                    return NotFound();
-                }
-
-                //Return Domain Model to DTO
-                return Ok(mapper.Map<RegionDto>(regionDomainModel));
-        }
-
-
-        // Delete Region Data
-        // DELETE: https://localhost:PORT/api/regions/{id}
-        [HttpDelete]
-        [Route("{id:Guid}")]
-        [Authorize(Roles = "Writer,Reader")]
-        public async Task<IActionResult> Delete([FromRoute] Guid id)
-        {
+                 response.AddRange(await httpResponseMessage.Content.ReadFromJsonAsync<IEnumerable<RegionDto>>());
             
-            //Calling Region Repository
-            var regionDomainModel = await regionRepository.DeleteAsync(id);
+              
 
-            if (regionDomainModel == null)
+            }
+            catch (Exception)
             {
-                return NotFound();
+                //Log exception
+            
             }
 
-            //return deleted Region back
-            //mapping Domain Model to DTO.
-            return Ok(mapper.Map<RegionDto>(regionDomainModel));
+            return View(response);
         }
 
 
+        [HttpGet]
+        public IActionResult Add()
+        {
+            return View();
+        }
 
+        [HttpPost]
+        public async Task<IActionResult> Add(AddRegionViewModel model)
+        {
+            var client = httpClientFactory.CreateClient();
+
+            var httpRequestMessage = new HttpRequestMessage()
+            {
+                Method = HttpMethod.Post,
+                RequestUri = new Uri("https://localhost:7002/api/regions"),
+                Content = new StringContent(JsonSerializer.Serialize(model),Encoding.UTF8, "application/json")
+            };
+
+           
+            var httpResponseMessage =  await client.SendAsync(httpRequestMessage);
+            httpResponseMessage.EnsureSuccessStatusCode();
+
+            var response = await httpResponseMessage.Content.ReadFromJsonAsync<RegionDto>();
+
+            if(response is not null) 
+            {
+                return RedirectToAction("Index", "Regions");
+            }
+
+            return View();
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> Edit(Guid id)
+        {
+           var client = httpClientFactory.CreateClient();
+
+           var response =  await client.GetFromJsonAsync<RegionDto>($"https://localhost:7002/api/regions/{id.ToString()}");
+           if(response is not null)
+           {
+                return View(response);
+           }
+            return View(null);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(RegionDto request)
+        {
+            var client = httpClientFactory.CreateClient();
+
+            var httpRequestMessage = new HttpRequestMessage()
+            {
+                Method = HttpMethod.Put,
+                RequestUri = new Uri($"https://localhost:7002/api/regions/{request.Id}"),
+                Content = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json")
+            };
+
+
+            var httpResponseMessage = await client.SendAsync(httpRequestMessage);
+            httpResponseMessage.EnsureSuccessStatusCode();
+
+            var response = await httpResponseMessage.Content.ReadFromJsonAsync<RegionDto>();
+
+            if(response is not null)
+            {
+                return RedirectToAction("Index", "Regions");
+            }
+
+            return View("Regions");
+        }
+
+
+        //Deleting resource.
+        [HttpPost]
+        public async Task<IActionResult> Delete(RegionDto request) 
+        {
+            try
+            {
+                var client = httpClientFactory.CreateClient();
+
+                var httpResponseMessage = await client.DeleteAsync($"https://localhost:7002/api/regions/{request.Id}");
+                //Make sure it print the 200 OK Status.
+                httpResponseMessage.EnsureSuccessStatusCode();
+
+                return RedirectToAction("Index", "Regions");
+            }
+            catch (Exception)
+            {
+                //Console                
+            }
+
+            return View("Edit");
+
+        }
 
     }
 }
