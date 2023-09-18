@@ -76,3 +76,10 @@ C:\Users\cjime\Desktop\NZWalks\NZWalks\NZWalks.API\obj\Debug\net7.0\refint\NZWal
 C:\Users\cjime\Desktop\NZWalks\NZWalks\NZWalks.API\obj\Debug\net7.0\NZWalks.API.pdb
 C:\Users\cjime\Desktop\NZWalks\NZWalks\NZWalks.API\obj\Debug\net7.0\NZWalks.API.genruntimeconfig.cache
 C:\Users\cjime\Desktop\NZWalks\NZWalks\NZWalks.API\obj\Debug\net7.0\ref\NZWalks.API.dll
+C:\Users\cjime\Desktop\NZWalks\NZWalks\NZWalks.API\bin\Debug\net7.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\cjime\Desktop\NZWalks\NZWalks\NZWalks.API\bin\Debug\net7.0\Microsoft.AspNetCore.Cryptography.Internal.dll
+C:\Users\cjime\Desktop\NZWalks\NZWalks\NZWalks.API\bin\Debug\net7.0\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
+C:\Users\cjime\Desktop\NZWalks\NZWalks\NZWalks.API\bin\Debug\net7.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
+C:\Users\cjime\Desktop\NZWalks\NZWalks\NZWalks.API\bin\Debug\net7.0\Microsoft.Extensions.Identity.Core.dll
+C:\Users\cjime\Desktop\NZWalks\NZWalks\NZWalks.API\bin\Debug\net7.0\Microsoft.Extensions.Identity.Stores.dll
+C:\Users\cjime\Desktop\NZWalks\NZWalks\NZWalks.API\bin\Debug\net7.0\Microsoft.Extensions.Options.dll
