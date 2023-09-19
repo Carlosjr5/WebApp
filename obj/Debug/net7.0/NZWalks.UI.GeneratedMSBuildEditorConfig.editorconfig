@@ -24,10 +24,6 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/cjime/Desktop/NZWalks/NZWalks/NZWalksUI/Views/RegionsController/Index.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVnaW9uc0NvbnRyb2xsZXJcSW5kZXguY3NodG1s
-build_metadata.AdditionalFiles.CssScope = 
-
 [C:/Users/cjime/Desktop/NZWalks/NZWalks/NZWalksUI/Views/Regions/Add.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVnaW9uc1xBZGQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
@@ -46,6 +42,18 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/cjime/Desktop/NZWalks/NZWalks/NZWalksUI/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/cjime/Desktop/NZWalks/NZWalks/NZWalksUI/Views/Walks/Add.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcV2Fsa3NcQWRkLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/cjime/Desktop/NZWalks/NZWalks/NZWalksUI/Views/Walks/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcV2Fsa3NcRWRpdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/cjime/Desktop/NZWalks/NZWalks/NZWalksUI/Views/Walks/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcV2Fsa3NcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/cjime/Desktop/NZWalks/NZWalks/NZWalksUI/Views/_ViewImports.cshtml]

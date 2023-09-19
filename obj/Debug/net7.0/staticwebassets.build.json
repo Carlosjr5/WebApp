@@ -1,11 +1,23 @@
 {
   "Version": 1,
-  "Hash": "BzjNt44MuoM1aoUKXLdDVCBUs8ySpXkCjAAdLRQGRK0=",
+  "Hash": "PD7m1NxzXsfkvBHLIXfQVgRMGPvLuq/K+M8n/TYFBlg=",
   "Source": "NZWalks.UI",
   "BasePath": "_content/NZWalks.UI",
   "Mode": "Default",
   "ManifestType": "Build",
-  "ReferencedProjectsConfiguration": [],
+  "ReferencedProjectsConfiguration": [
+    {
+      "Identity": "C:\\Users\\cjime\\Desktop\\NZWalks\\NZWalks\\NZWalks.API\\NZWalks.API.csproj",
+      "Version": 2,
+      "Source": "NZWalks.API",
+      "GetPublishAssetsTargets": "ComputeReferencedStaticWebAssetsPublishManifest;GetCurrentProjectPublishStaticWebAssetItems",
+      "AdditionalPublishProperties": "Configuration=Debug;Platform=AnyCPU",
+      "AdditionalPublishPropertiesToRemove": "WebPublishProfileFile;TargetFramework",
+      "GetBuildAssetsTargets": "GetCurrentProjectBuildStaticWebAssetItems",
+      "AdditionalBuildProperties": "Configuration=Debug;Platform=AnyCPU",
+      "AdditionalBuildPropertiesToRemove": "WebPublishProfileFile;TargetFramework"
+    }
+  ],
   "DiscoveryPatterns": [
     {
       "Name": "NZWalks.UI\\wwwroot",
@@ -100,6 +112,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\js\\site.js"
+    },
+    {
+      "Identity": "C:\\Users\\cjime\\Desktop\\NZWalks\\NZWalks\\NZWalksUI\\wwwroot\\js\\sort-table.js",
+      "SourceId": "NZWalks.UI",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\cjime\\Desktop\\NZWalks\\NZWalks\\NZWalksUI\\wwwroot\\",
+      "BasePath": "_content/NZWalks.UI",
+      "RelativePath": "js/sort-table.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\js\\sort-table.js"
     },
     {
       "Identity": "C:\\Users\\cjime\\Desktop\\NZWalks\\NZWalks\\NZWalksUI\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.css",

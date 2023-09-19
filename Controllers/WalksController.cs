@@ -1,120 +1,149 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
-using NZWalks.API.CustomActionFilters;
-using NZWalks.API.Models.Domain;
-using NZWalks.API.Models.DTO;
-using NZWalks.API.Repositories;
+﻿using Microsoft.AspNetCore.Mvc;
+using NZWalks.UI.Models;
+using System.Text.Json;
+using System.Text;
+using NZWalks.UI.Models.DTO;
 
-namespace NZWalks.API.Controllers
+namespace NZWalks.UI.Controllers
 {
-    // https://localhost:PORT/api/walks
-    [Route("api/[controller]")]
-    [ApiController]
-    public class WalksController : ControllerBase
+    public class WalksController : Controller
     {
 
-        //Declaring auto mapping and walk repository.
-        private readonly IMapper mapper;
-        private readonly IWalkRepository walkRepository;
+        private readonly IHttpClientFactory httpClientFactory;
 
-        //Constructor.
-        public WalksController(IMapper mapper, IWalkRepository walkRepository)
+        public WalksController(IHttpClientFactory httpClientFactory)
         {
-            this.mapper = mapper;
-            this.walkRepository = walkRepository;
+            this.httpClientFactory = httpClientFactory;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Index()
+        {
+            List<WalkDto> response = new List<WalkDto>();
+            try
+            {
+                //Get All Walks from the Web API
+                var client = httpClientFactory.CreateClient();
+
+                var httpResponseMessage = await client.GetAsync("https://localhost:7002/api/walks");
+
+                //Checking is successfull the response message 200.
+                httpResponseMessage.EnsureSuccessStatusCode();
+
+                response.AddRange(await httpResponseMessage.Content.ReadFromJsonAsync<IEnumerable<WalkDto>>());
+
+
+
+            }
+            catch (Exception)
+            {
+                //Log exception
+
+            }
+
+            return View(response);
         }
 
 
-        //Create Walk
-        //POST: https://localhost:PORT/api/walks
+        [HttpGet]
+        public IActionResult Add()
+        {
+            return View();
+        }
+
         [HttpPost]
-        [ValidateModel]
-        public async Task<IActionResult> Create([FromBody] AddWalkRequestDto addWalkRequestDto)
+        public async Task<IActionResult> Add(AddWalkViewModel model)
         {
-                // Map DTO to Domain Model
-                var walkDomainModel = mapper.Map<Walk>(addWalkRequestDto);
+            var client = httpClientFactory.CreateClient();
 
-                await walkRepository.CreateAsync(walkDomainModel);
-
-                //map domain model to DTO
-                return Ok(mapper.Map<WalkDto>(walkDomainModel));
-
-        }
-
-
-        // Get Walks
-        // GET:  https://localhost:PORT/api/walks?filterOn&filterQuery=Track&sortBy=Name&isAscending=true&PageNumber=1&pageSize=10
-        [HttpGet]
-        public async Task<IActionResult> GetAll([FromQuery] string? filterOn, [FromQuery] string? filterQuery, 
-                                                [FromQuery] string? sortBy, [FromQuery] bool? isAscending,
-                                                [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 1000) 
-        {
-            var walksDomainModel = await walkRepository.GetAllAsync(filterOn, filterQuery, sortBy, isAscending ?? true, pageNumber, pageSize);
-
-            //Map Domain Model to DTO
-            return Ok(mapper.Map<List<WalkDto>>(walksDomainModel));
-        }
-
-
-
-        // Get Walks by Id
-        // GET:  https://localhost:PORT/api/walks/{id}
-        [HttpGet]
-        [Route("{id:Guid}")]
-        public async Task<IActionResult> GetById([FromRoute] Guid id)
-        {
-            var walkDomainModel = await walkRepository.GetByIdAsync(id);
-
-            if (walkDomainModel == null)
+            var httpRequestMessage = new HttpRequestMessage()
             {
-                return NotFound();
+                Method = HttpMethod.Post,
+                RequestUri = new Uri("https://localhost:7002/api/walks"),
+                Content = new StringContent(JsonSerializer.Serialize(model), Encoding.UTF8, "application/json")
+            };
+
+
+            var httpResponseMessage = await client.SendAsync(httpRequestMessage);
+            httpResponseMessage.EnsureSuccessStatusCode();
+
+            var response = await httpResponseMessage.Content.ReadFromJsonAsync<WalkDto>();
+
+            if (response is not null)
+            {
+                return RedirectToAction("Index", "walks");
             }
 
-            //Map Domain Model to DTO
-            return Ok(mapper.Map<WalkDto>(walkDomainModel));
+            return View();
         }
 
 
-
-        // Update Walks by Id
-        // PUT:  https://localhost:PORT/api/walks/{id}
-        [HttpPut]
-        [Route("{id:Guid}")]
-        [ValidateModel]
-        public async Task<IActionResult> Update([FromRoute] Guid id, UpdateWalkRequestDto updateWalkRequestDto)
+        [HttpGet]
+        public async Task<IActionResult> Edit(Guid id)
         {
-                //Map DTO to Domain Model
-                var walkDomainModel = mapper.Map<Walk>(updateWalkRequestDto);
+            var client = httpClientFactory.CreateClient();
 
-                walkDomainModel = await walkRepository.UpdateAsync(id, walkDomainModel);
-
-                if (walkDomainModel == null)
-                {
-                    return NotFound();
-                }
-
-                return Ok(mapper.Map<WalkDto>(walkDomainModel));
-          
-        }
-
-
-
-        // Delete Walks by Id
-        // DELETE:  https://localhost:PORT/api/walks/{id}
-        [HttpDelete]
-        [Route("{id:Guid}")]
-        public async Task<IActionResult> Delete([FromRoute] Guid id)
-        {
-            var deletedWalkDomainModel = await walkRepository.DeleteAsync(id);
-
-            if (deletedWalkDomainModel == null)
+            var response = await client.GetFromJsonAsync<WalkDto>($"https://localhost:7002/api/walks/{id.ToString()}");
+            if (response is not null)
             {
-                return NotFound();
+                return View(response);
+            }
+            return View(null);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(WalkDto request)
+        {
+            var client = httpClientFactory.CreateClient();
+
+            var httpRequestMessage = new HttpRequestMessage()
+            {
+                Method = HttpMethod.Put,
+                RequestUri = new Uri($"https://localhost:7002/api/walks/{request.Id}"),
+                Content = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json")
+            };
+
+
+            var httpResponseMessage = await client.SendAsync(httpRequestMessage);
+            httpResponseMessage.EnsureSuccessStatusCode();
+
+            var response = await httpResponseMessage.Content.ReadFromJsonAsync<WalkDto>();
+
+            if (response is not null)
+            {
+                return RedirectToAction("Index", "walks");
             }
 
-            //Maping Domain Model to DTO
-            return Ok(mapper.Map<WalkDto>(deletedWalkDomainModel));
+            return View("walks");
         }
+
+
+        //Deleting resource.
+        [HttpPost]
+        public async Task<IActionResult> Delete(WalkDto request)
+        {
+            try
+            {
+                var client = httpClientFactory.CreateClient();
+
+                var httpResponseMessage = await client.DeleteAsync($"https://localhost:7002/api/walks/{request.Id}");
+                //Make sure it print the 200 OK Status.
+                httpResponseMessage.EnsureSuccessStatusCode();
+
+                return RedirectToAction("Index", "walks");
+            }
+            catch (Exception)
+            {
+                //Console                
+            }
+
+            return View("Edit");
+
+        }
+    
+
+
+
 
 
     }

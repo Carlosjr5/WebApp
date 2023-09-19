@@ -17,6 +17,10 @@
       "PackagePath": "staticwebassets\\js\\site.js"
     },
     {
+      "Id": "C:\\Users\\cjime\\Desktop\\NZWalks\\NZWalks\\NZWalksUI\\wwwroot\\js\\sort-table.js",
+      "PackagePath": "staticwebassets\\js\\sort-table.js"
+    },
+    {
       "Id": "C:\\Users\\cjime\\Desktop\\NZWalks\\NZWalks\\NZWalksUI\\wwwroot\\lib\\bootstrap\\LICENSE",
       "PackagePath": "staticwebassets\\lib\\bootstrap"
     },

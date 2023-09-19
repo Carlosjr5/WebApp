@@ -1,9 +1,10 @@
-﻿namespace NZWalks.UI.Models.DTO
+﻿using NZWalks.UI.Models.DTO;
+
+namespace NZWalks.UI.Models
 {
-    public class WalkDto
+    public class AddWalkViewModel
     {
 
-        public Guid Id { get; set; }
 
         public string Name { get; set; }
 
@@ -17,6 +18,6 @@
 
         public Guid RegionId { get; set; }
 
-  
+
     }
 }
