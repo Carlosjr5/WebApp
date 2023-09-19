@@ -115,8 +115,21 @@ namespace NZWalks.API.Repositories
 
         }
 
+        //SQL Injection preventions
+        public async Task<List<Walk>> SearchWalksAsync(string searchText)
+        {
+            // Use parameterized queries with EF Core to prevent SQL injection
+            var walks = await dbContext.Walks
+                .Where(w => w.Name.Contains(searchText))
+                .ToListAsync();
 
+            return walks;
+        }
 
+        Task IWalkRepository.SearchWalksAsync(string searchText)
+        {
+            throw new NotImplementedException();
+        }
     }
 
 

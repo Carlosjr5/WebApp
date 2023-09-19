@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using NZWalks.API.CustomActionFilters;
 using NZWalks.API.Models.Domain;
 using NZWalks.API.Models.DTO;
@@ -17,6 +18,7 @@ namespace NZWalks.API.Controllers
         private readonly IMapper mapper;
         private readonly IWalkRepository walkRepository;
 
+
         //Constructor.
         public WalksController(IMapper mapper, IWalkRepository walkRepository)
         {
@@ -24,7 +26,7 @@ namespace NZWalks.API.Controllers
             this.walkRepository = walkRepository;
         }
 
-
+   
         //Create Walk
         //POST: https://localhost:PORT/api/walks
         [HttpPost]
